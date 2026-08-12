@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mareflo — MoodDial | Pratik Tamgadge</title>
+<meta name="description" content="Mareflo is an independent Android gaming social platform featuring MoodDial, an original dual-slider reaction pattern.">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar__brand">
+    <span class="brand-mark"></span>PRATIK.OS<span class="brand-cursor"></span>
+  </div>
+  <nav class="topbar__nav">
+    <a href="../index.html">Home</a>
+    <a href="../about.html">About</a>
+    <a href="../index.html#work">Work</a>
+    <a href="../contact.html">Contact</a>
+  </nav>
+  <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+</div>
+
+<header class="case-hero container">
+  <div class="eyebrow">/work/mareflo</div>
+  <div class="case-hero__tags">
+    <span class="credential-tag">Personal Project</span>
+    <span class="credential-tag">Android</span>
+    <span class="credential-tag">Solo-built</span>
+  </div>
+  <h1>Rethinking how gamers react.</h1>
+  <p class="case-hero__sub">
+    An independent gaming social platform MVP, designed, prototyped, and built solo — anchored by an
+    original interaction pattern called MoodDial.
+  </p>
+</header>
+
+<section class="tight">
+  <div class="container prose reveal">
+    <p>
+      Mareflo is a passion project born from a simple frustration: binary reactions — like/dislike,
+      thumbs up/down — don't capture how gamers actually feel about a clip, a play, or a moment. A
+      clutch win and a lucky win might both get a "like," but they're not the same feeling at all.
+    </p>
+    <p>
+      So I designed <strong>MoodDial</strong> — an interaction pattern that replaces the single-tap
+      reaction with dual emoji sliders, letting a player express <em>what</em> they felt and
+      <em>how much</em> in a single gesture.
+    </p>
+    <p>
+      The design question underneath it: how do you capture nuance without adding friction? A reaction
+      has to happen in the two seconds after a clip ends, or it doesn't happen at all. Two sliders,
+      pre-positioned at neutral, let someone express something genuinely specific with the same number of
+      taps as a single like button — just a drag instead of a tap.
+    </p>
+    <p>
+      I treated the whole build as a design problem first, not a feature list: research the actual
+      reaction moment, prototype the gesture until it felt fast rather than fiddly, then build the rest of
+      the social platform — feed, profile, clip sharing — around that one interaction being right.
+    </p>
+  </div>
+</section>
+
+<section class="tight">
+  <div class="container reveal">
+    <div class="section-head">
+      <h2>Try it</h2>
+      <span class="meta">LIVE — THE ACTUAL PATTERN</span>
+    </div>
+    <p class="prose" style="margin-bottom: 8px;">
+      This isn't a screenshot. It's the real MoodDial interaction — drag both sliders.
+    </p>
+    <div class="mooddial" data-mooddial style="max-width: 560px;">
+      <div class="mooddial__row">
+        <span class="mooddial__emoji" data-mood-emoji>😐</span>
+        <input type="range" min="0" max="4" value="2" step="1" data-mood-slider aria-label="Mood">
+      </div>
+      <div class="mooddial__row">
+        <span class="mooddial__emoji" data-intensity-emoji>😆</span>
+        <input type="range" min="0" max="4" value="2" step="1" data-intensity-slider aria-label="Intensity">
+      </div>
+      <div class="mooddial__readout" data-readout></div>
+    </div>
+  </div>
+</section>
+
+<section class="tight">
+  <div class="container prose reveal">
+    <p>
+      I built the entire MVP myself using an AI-augmented workflow: <strong>Claude</strong> for product
+      thinking and content, <strong>Cursor</strong> for implementation, <strong>Figma Make</strong> for
+      rapid prototyping, and <strong>Replit</strong> for deployment — going from concept to a working
+      product without a traditional dev team.
+    </p>
+    <p>
+      In practice that meant thinking through user flows and edge cases with Claude before touching a
+      screen, exploring the MoodDial's visual behavior fast in Figma Make once the interaction logic was
+      solid, implementing it properly in Cursor, and shipping to a live, testable build in Replit —
+      compressing a process that would normally involve a small team into one continuous loop.
+    </p>
+  </div>
+
+  <div class="container reveal">
+    <div class="bento-facts">
+      <div class="bento-tile">
+        <div class="k">Role</div>
+        <div class="v">Solo — design, build, ship</div>
+      </div>
+      <div class="bento-tile">
+        <div class="k">Platform</div>
+        <div class="v">Android</div>
+      </div>
+      <div class="bento-tile">
+        <div class="k">Signature pattern</div>
+        <div class="v">MoodDial</div>
+      </div>
+      <div class="bento-tile">
+        <div class="k">AI toolchain</div>
+        <div class="v">Claude · Cursor · Figma Make · Replit</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container prose reveal">
+    <p class="pull-quote">
+      Mareflo is proof of how I work when I own the whole stack — research, interaction design,
+      prototyping, and shipping.
+    </p>
+    <p>
+      It's become the clearest demonstration of my AI-augmented design practice in interviews — not a
+      slide about how I'd use AI, but a shipped product built with it.
+    </p>
+  </div>
+
+  <div class="container reveal">
+    <div class="image-frame" style="aspect-ratio: 3/2;">
+      <img src="../assets/images/mareflo-app-screens.png" alt="Mareflo app screens">
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <div class="case-nav">
+    <a href="../index.html#work">← Back to work</a>
+    <a href="igaming.html">Next: Responsible Gaming UX →</a>
+  </div>
+</div>
+
+<footer style="border-top: none;">
+  <div class="container">
+    <div class="footer__meta">
+      <span>© 2026 Pratik Tamgadge</span>
+      <a href="mailto:pratiktamgadge25@gmail.com" style="color: var(--cyan);">pratiktamgadge25@gmail.com</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/script.js"></script>
+</body>
+</html>
