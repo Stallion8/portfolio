@@ -193,12 +193,20 @@ if (topbar) {
     }
   ];
 
+  const topbarEl = document.querySelector('.topbar');
+  const brand = topbarEl?.querySelector('.topbar__brand');
   const nav = document.querySelector('.topbar__nav');
   const menuToggle = document.querySelector('.menu-toggle');
-  if (!nav || !menuToggle) return;
+  if (!topbarEl || !brand || !nav || !menuToggle) return;
 
-  const wrap = document.createElement('div');
-  wrap.className = 'topbar__right';
+  let right = topbarEl.querySelector('.topbar__right');
+  if (!right) {
+    right = document.createElement('div');
+    right.className = 'topbar__right';
+    topbarEl.appendChild(right);
+  }
+  right.appendChild(nav);
+  right.appendChild(menuToggle);
 
   const switcher = document.createElement('div');
   switcher.className = 'theme-switcher';
@@ -220,10 +228,7 @@ if (topbar) {
     return btn;
   });
 
-  nav.parentNode.insertBefore(wrap, nav);
-  wrap.appendChild(nav);
-  wrap.appendChild(switcher);
-  wrap.appendChild(menuToggle);
+  brand.after(switcher);
 
   const current = document.documentElement.getAttribute('data-theme') || 'amoled';
 
@@ -256,7 +261,7 @@ if (topbar) {
 })();
 
 // ==========================================================================
-// Work tile galaxy halation — mouse-synced, tiles only
+// Work tile galaxy halation — idle fluid drift + mouse-synced, tiles only
 // ==========================================================================
 (function initTileHalation() {
   if (prefersReducedMotion) return;
@@ -266,6 +271,7 @@ if (topbar) {
 
   const activeTiles = new Set();
   let rafId = 0;
+  const IDLE_STRENGTH = 0.34;
 
   function parseGlowColor(el) {
     const probe = document.createElement('span');
@@ -287,7 +293,8 @@ if (topbar) {
     ctx.globalCompositeOperation = blend;
     const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
     grad.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`);
-    grad.addColorStop(0.35, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.45})`);
+    grad.addColorStop(0.22, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.62})`);
+    grad.addColorStop(0.55, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.22})`);
     grad.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
     ctx.fillStyle = grad;
     ctx.beginPath();
@@ -295,7 +302,11 @@ if (topbar) {
     ctx.fill();
   }
 
-  cards.forEach(card => {
+  function ensureLoop() {
+    if (!rafId) rafId = requestAnimationFrame(loop);
+  }
+
+  cards.forEach((card, index) => {
     const canvas = document.createElement('canvas');
     canvas.className = 'case-card__halation';
     canvas.setAttribute('aria-hidden', 'true');
@@ -311,11 +322,16 @@ if (topbar) {
       width: 0,
       height: 0,
       dpr: 1,
+      phase: index * 1.7 + Math.random() * Math.PI,
+      pointerX: 0.5,
+      pointerY: 0.5,
       tx: 0.5,
       ty: 0.5,
       x: 0.5,
       y: 0.5,
-      strength: 0,
+      hoverBlend: 0,
+      pointerActive: false,
+      visible: false,
       stars: [],
       resize() {
         const rect = card.getBoundingClientRect();
@@ -327,33 +343,56 @@ if (topbar) {
         canvas.style.width = this.width + 'px';
         canvas.style.height = this.height + 'px';
         this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
-        const count = Math.min(36, Math.floor((this.width * this.height) / 4200));
+        const count = Math.min(120, Math.floor((this.width * this.height) / 1400));
         this.stars = Array.from({ length: count }, () => ({
           x: Math.random(),
           y: Math.random(),
-          r: Math.random() * 0.9 + 0.25,
-          twinkle: Math.random() * Math.PI * 2
+          r: Math.random() * 1.05 + 0.2,
+          twinkle: Math.random() * Math.PI * 2,
+          drift: Math.random() * Math.PI * 2,
+          speed: Math.random() * 0.35 + 0.12
         }));
       },
+      idlePoint(t) {
+        const p = this.phase;
+        return {
+          x: 0.5
+            + Math.sin(t * 0.34 + p) * 0.17
+            + Math.sin(t * 0.19 + p * 1.6) * 0.08
+            + Math.cos(t * 0.11 + p * 0.7) * 0.04,
+          y: 0.5
+            + Math.cos(t * 0.29 + p * 0.8) * 0.14
+            + Math.cos(t * 0.16 + p * 1.3) * 0.07
+            + Math.sin(t * 0.13 + p) * 0.04
+        };
+      },
       render(ts) {
+        if (!this.visible) return;
+
         const t = ts * 0.001;
         const { ctx, width, height } = this;
         ctx.clearRect(0, 0, width, height);
 
-        this.x += (this.tx - this.x) * 0.14;
-        this.y += (this.ty - this.y) * 0.14;
-
+        const idle = this.idlePoint(t);
         const hovered = card.matches(':hover');
-        const target = hovered ? 1 : 0;
-        this.strength += (target - this.strength) * 0.1;
+        this.hoverBlend += ((hovered ? 1 : 0) - this.hoverBlend) * 0.07;
 
-        if (this.strength < 0.02 && !hovered) {
-          card.classList.remove('is-halation-active');
-          activeTiles.delete(this);
-          return;
-        }
+        const targetX = this.pointerActive
+          ? this.pointerX * this.hoverBlend + idle.x * (1 - this.hoverBlend)
+          : idle.x;
+        const targetY = this.pointerActive
+          ? this.pointerY * this.hoverBlend + idle.y * (1 - this.hoverBlend)
+          : idle.y;
 
-        card.classList.add('is-halation-active');
+        this.tx = targetX;
+        this.ty = targetY;
+        this.x += (this.tx - this.x) * 0.055;
+        this.y += (this.ty - this.y) * 0.055;
+
+        const strength = IDLE_STRENGTH + (1 - IDLE_STRENGTH) * this.hoverBlend;
+        card.classList.add('is-halation-visible');
+        card.classList.toggle('is-halation-active', this.hoverBlend > 0.08);
+
         const intensity = themeIntensity();
         const glow = parseGlowColor(card);
         const secondary = glow.r > 180
@@ -363,22 +402,55 @@ if (topbar) {
         const hx = this.x * width;
         const hy = this.y * height;
         const base = Math.max(width, height);
+        const pulse = 1 + Math.sin(t * 0.55 + this.phase) * 0.07;
 
-        drawBloom(ctx, hx, hy, base * 0.55, glow, (0.13 + this.strength * 0.08) * intensity, blend);
         drawBloom(
           ctx,
-          hx + Math.sin(t * 0.7) * 8,
-          hy + Math.cos(t * 0.55) * 6,
-          base * 0.32,
-          secondary,
-          (0.07 + this.strength * 0.04) * intensity,
+          hx + Math.sin(t * 0.42 + this.phase) * 10,
+          hy + Math.cos(t * 0.36 + this.phase) * 8,
+          base * 0.62 * pulse,
+          glow,
+          (0.08 + strength * 0.11) * intensity,
           blend
         );
-        drawBloom(ctx, hx, hy, base * 0.12, { r: 255, g: 255, b: 255 }, 0.03 * this.strength * intensity, blend);
+        drawBloom(
+          ctx,
+          hx + Math.sin(t * 0.28 + this.phase * 1.4) * 22,
+          hy + Math.cos(t * 0.31 + this.phase) * 18,
+          base * 0.4 * (1 + Math.sin(t * 0.48) * 0.06),
+          secondary,
+          (0.05 + strength * 0.07) * intensity,
+          blend
+        );
+        drawBloom(
+          ctx,
+          hx + Math.cos(t * 0.22 + this.phase * 0.6) * 28,
+          hy + Math.sin(t * 0.25 + this.phase * 1.2) * 24,
+          base * 0.28 * pulse,
+          glow,
+          (0.035 + strength * 0.05) * intensity,
+          blend
+        );
+        drawBloom(
+          ctx,
+          hx,
+          hy,
+          base * 0.14 * (1 + Math.cos(t * 0.62 + this.phase) * 0.08),
+          { r: 255, g: 255, b: 255 },
+          (0.018 + strength * 0.03) * intensity,
+          blend
+        );
 
         ctx.globalCompositeOperation = 'source-over';
         this.stars.forEach(star => {
-          const alpha = (0.12 + Math.sin(t * 1.4 + star.twinkle) * 0.1) * this.strength * intensity;
+          star.x += Math.sin(t * star.speed + star.drift) * 0.00012;
+          star.y += Math.cos(t * star.speed * 0.85 + star.drift) * 0.0001;
+          if (star.x < 0) star.x += 1;
+          if (star.x > 1) star.x -= 1;
+          if (star.y < 0) star.y += 1;
+          if (star.y > 1) star.y -= 1;
+
+          const alpha = (0.1 + Math.sin(t * 1.6 + star.twinkle) * 0.12 + strength * 0.08) * intensity;
           ctx.beginPath();
           ctx.arc(star.x * width, star.y * height, star.r, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
@@ -388,36 +460,60 @@ if (topbar) {
     };
 
     card.addEventListener('mouseenter', () => {
+      state.pointerActive = true;
       state.resize();
-      activeTiles.add(state);
-      if (!rafId) rafId = requestAnimationFrame(loop);
     });
 
     card.addEventListener('mousemove', (e) => {
       const rect = card.getBoundingClientRect();
-      state.tx = (e.clientX - rect.left) / rect.width;
-      state.ty = (e.clientY - rect.top) / rect.height;
+      state.pointerX = (e.clientX - rect.left) / rect.width;
+      state.pointerY = (e.clientY - rect.top) / rect.height;
     });
 
     card.addEventListener('mouseleave', () => {
-      state.tx = 0.5;
-      state.ty = 0.5;
+      state.pointerActive = false;
     });
 
     card.addEventListener('touchstart', (e) => {
+      state.pointerActive = true;
       state.resize();
-      activeTiles.add(state);
-      if (!rafId) rafId = requestAnimationFrame(loop);
       if (e.touches[0]) {
         const rect = card.getBoundingClientRect();
-        state.tx = (e.touches[0].clientX - rect.left) / rect.width;
-        state.ty = (e.touches[0].clientY - rect.top) / rect.height;
+        state.pointerX = (e.touches[0].clientX - rect.left) / rect.width;
+        state.pointerY = (e.touches[0].clientY - rect.top) / rect.height;
       }
     }, { passive: true });
 
+    card.addEventListener('touchend', () => {
+      state.pointerActive = false;
+    }, { passive: true });
+
     window.addEventListener('resize', () => {
-      if (activeTiles.has(state)) state.resize();
+      if (state.visible) state.resize();
     });
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          state.visible = entry.isIntersecting;
+          if (state.visible) {
+            state.resize();
+            activeTiles.add(state);
+            card.classList.add('is-halation-visible');
+            ensureLoop();
+          } else {
+            activeTiles.delete(state);
+            card.classList.remove('is-halation-visible', 'is-halation-active');
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '40px 0px' });
+      io.observe(card);
+    } else {
+      state.visible = true;
+      state.resize();
+      activeTiles.add(state);
+      ensureLoop();
+    }
   });
 
   function loop(ts) {
