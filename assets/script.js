@@ -15,6 +15,24 @@ if (menuToggle && topbarNav) {
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ==========================================================================
+// PRATIK.OS brand → Home
+// ==========================================================================
+(function initBrandHomeLink() {
+  const brand = document.querySelector('.topbar__brand');
+  if (!brand || brand.closest('a')) return;
+
+  const stylesheet = document.querySelector('link[rel="stylesheet"]');
+  const homeHref = stylesheet?.getAttribute('href')?.includes('../') ? '../index.html' : 'index.html';
+
+  const link = document.createElement('a');
+  link.href = homeHref;
+  link.className = brand.className;
+  link.setAttribute('aria-label', 'PRATIK.OS — Home');
+  link.innerHTML = brand.innerHTML;
+  brand.replaceWith(link);
+})();
+
+// ==========================================================================
 // Scroll progress bar
 // ==========================================================================
 (function initProgressBar() {
@@ -271,7 +289,7 @@ if (topbar) {
 
   const activeTiles = new Set();
   let rafId = 0;
-  const IDLE_STRENGTH = 0.34;
+  const IDLE_STRENGTH = 0.44;
 
   function parseGlowColor(el) {
     const probe = document.createElement('span');
@@ -293,13 +311,39 @@ if (topbar) {
     ctx.globalCompositeOperation = blend;
     const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
     grad.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`);
-    grad.addColorStop(0.22, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.62})`);
-    grad.addColorStop(0.55, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.22})`);
+    grad.addColorStop(0.1, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.88})`);
+    grad.addColorStop(0.28, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.48})`);
+    grad.addColorStop(0.52, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.16})`);
+    grad.addColorStop(0.76, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.04})`);
     grad.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
     ctx.fillStyle = grad;
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
+  }
+
+  function mixRgb(a, b, t) {
+    return {
+      r: Math.round(a.r + (b.r - a.r) * t),
+      g: Math.round(a.g + (b.g - a.g) * t),
+      b: Math.round(a.b + (b.b - a.b) * t)
+    };
+  }
+
+  function drawGalaxyBlob(ctx, cx, cy, base, glow, secondary, strength, intensity, blend, t, phase) {
+    const wobbleX = Math.sin(t * 0.36 + phase) * 5 + Math.sin(t * 0.19 + phase * 1.7) * 2.5;
+    const wobbleY = Math.cos(t * 0.31 + phase) * 4 + Math.cos(t * 0.16 + phase * 1.4) * 2;
+    const x = cx + wobbleX;
+    const y = cy + wobbleY;
+    const s = strength * intensity;
+    const pulse = 1 + Math.sin(t * 0.48 + phase) * 0.06;
+    const tint = mixRgb(glow, secondary, 0.38 + Math.sin(t * 0.22 + phase) * 0.12);
+
+    drawBloom(ctx, x, y, base * 0.92 * pulse, glow, 0.2 * s, blend);
+    drawBloom(ctx, x, y, base * 0.68 * pulse, tint, 0.28 * s, blend);
+    drawBloom(ctx, x, y, base * 0.48 * pulse, glow, 0.38 * s, blend);
+    drawBloom(ctx, x, y, base * 0.3 * pulse, tint, 0.26 * s, blend);
+    drawBloom(ctx, x, y, base * 0.16 * pulse, { r: 255, g: 255, b: 255 }, 0.22 * s, blend);
   }
 
   function ensureLoop() {
@@ -402,44 +446,8 @@ if (topbar) {
         const hx = this.x * width;
         const hy = this.y * height;
         const base = Math.max(width, height);
-        const pulse = 1 + Math.sin(t * 0.55 + this.phase) * 0.07;
 
-        drawBloom(
-          ctx,
-          hx + Math.sin(t * 0.42 + this.phase) * 10,
-          hy + Math.cos(t * 0.36 + this.phase) * 8,
-          base * 0.62 * pulse,
-          glow,
-          (0.08 + strength * 0.11) * intensity,
-          blend
-        );
-        drawBloom(
-          ctx,
-          hx + Math.sin(t * 0.28 + this.phase * 1.4) * 22,
-          hy + Math.cos(t * 0.31 + this.phase) * 18,
-          base * 0.4 * (1 + Math.sin(t * 0.48) * 0.06),
-          secondary,
-          (0.05 + strength * 0.07) * intensity,
-          blend
-        );
-        drawBloom(
-          ctx,
-          hx + Math.cos(t * 0.22 + this.phase * 0.6) * 28,
-          hy + Math.sin(t * 0.25 + this.phase * 1.2) * 24,
-          base * 0.28 * pulse,
-          glow,
-          (0.035 + strength * 0.05) * intensity,
-          blend
-        );
-        drawBloom(
-          ctx,
-          hx,
-          hy,
-          base * 0.14 * (1 + Math.cos(t * 0.62 + this.phase) * 0.08),
-          { r: 255, g: 255, b: 255 },
-          (0.018 + strength * 0.03) * intensity,
-          blend
-        );
+        drawGalaxyBlob(ctx, hx, hy, base, glow, secondary, strength, intensity, blend, t, this.phase);
 
         ctx.globalCompositeOperation = 'source-over';
         this.stars.forEach(star => {
@@ -450,7 +458,7 @@ if (topbar) {
           if (star.y < 0) star.y += 1;
           if (star.y > 1) star.y -= 1;
 
-          const alpha = (0.1 + Math.sin(t * 1.6 + star.twinkle) * 0.12 + strength * 0.08) * intensity;
+          const alpha = (0.14 + Math.sin(t * 1.6 + star.twinkle) * 0.14 + strength * 0.1) * intensity;
           ctx.beginPath();
           ctx.arc(star.x * width, star.y * height, star.r, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
