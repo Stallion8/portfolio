@@ -227,6 +227,13 @@ h1, h2, h3, h4 {
   gap: 8px;
   font-weight: 500;
   color: var(--bone);
+  text-decoration: none;
+  transition: opacity 0.25s ease, color 0.25s ease;
+}
+
+a.topbar__brand:hover {
+  opacity: 0.78;
+  color: var(--cyan);
 }
 
 .brand-mark {
@@ -756,12 +763,12 @@ section.tight { padding: 80px 0; }
   pointer-events: none;
   z-index: 0;
   border-radius: inherit;
-  opacity: 0.5;
+  opacity: 0.58;
   transition: opacity 0.55s ease;
 }
 
 .case-card.is-halation-visible .case-card__halation {
-  opacity: 0.62;
+  opacity: 0.82;
 }
 
 .case-card.is-halation-active .case-card__halation,
