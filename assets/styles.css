@@ -21,18 +21,30 @@
   --bone-dim: #b8b6b0;
   --graphite: #6b6e76;
   --graphite-dim: #45474e;
-  --topbar-bg: rgba(8, 8, 10, 0.38);
+  --topbar-bg: rgba(8, 8, 10, 0.22);
   --grain-opacity: 0.035;
   --shadow-soft: rgba(0, 0, 0, 0.35);
   --halation-blend: screen;
-  --glass-bg: rgba(18, 18, 22, 0.44);
-  --glass-bg-hover: rgba(26, 26, 32, 0.58);
-  --glass-bg-strong: rgba(14, 14, 18, 0.72);
-  --glass-border: rgba(255, 255, 255, 0.14);
-  --glass-border-soft: rgba(255, 255, 255, 0.07);
-  --glass-shadow: 0 12px 40px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.14);
-  --glass-blur: 32px;
-  --glass-saturate: 190%;
+  /* Liquid Glass — Amoled (regular material tier) */
+  --glass-bg: rgba(22, 24, 30, 0.26);
+  --glass-bg-hover: rgba(30, 32, 40, 0.38);
+  --glass-bg-strong: rgba(16, 18, 24, 0.52);
+  --glass-border: rgba(255, 255, 255, 0.28);
+  --glass-border-soft: rgba(255, 255, 255, 0.12);
+  --glass-rim: rgba(255, 255, 255, 0.42);
+  --glass-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.55),
+    0 8px 24px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.28);
+  --glass-blur-chrome: 28px;
+  --glass-blur: 48px;
+  --glass-blur-thick: 64px;
+  --glass-saturate: 240%;
+  --glass-brightness: 1.14;
+  --glass-contrast: 1.06;
+  --glass-specular: 0.12;
+  --glass-ambient-opacity: 0.9;
   color-scheme: dark;
 }
 
@@ -49,18 +61,29 @@
   --bone-dim: #5a5248;
   --graphite: #8a8074;
   --graphite-dim: #6b6358;
-  --topbar-bg: rgba(247, 242, 232, 0.52);
+  --topbar-bg: rgba(247, 242, 232, 0.34);
   --grain-opacity: 0.045;
   --shadow-soft: rgba(44, 38, 32, 0.14);
   --halation-blend: multiply;
-  --glass-bg: rgba(255, 250, 242, 0.58);
-  --glass-bg-hover: rgba(255, 252, 246, 0.72);
-  --glass-bg-strong: rgba(239, 232, 220, 0.78);
-  --glass-border: rgba(255, 255, 255, 0.52);
-  --glass-border-soft: rgba(44, 38, 32, 0.08);
-  --glass-shadow: 0 12px 36px rgba(44, 38, 32, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.72);
-  --glass-blur: 28px;
-  --glass-saturate: 165%;
+  --glass-bg: rgba(255, 252, 246, 0.42);
+  --glass-bg-hover: rgba(255, 255, 252, 0.58);
+  --glass-bg-strong: rgba(255, 250, 242, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.78);
+  --glass-border-soft: rgba(44, 38, 32, 0.1);
+  --glass-rim: rgba(255, 255, 255, 0.95);
+  --glass-shadow:
+    0 22px 56px rgba(44, 38, 32, 0.16),
+    0 8px 20px rgba(44, 38, 32, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(44, 38, 32, 0.08);
+  --glass-blur-chrome: 24px;
+  --glass-blur: 40px;
+  --glass-blur-thick: 56px;
+  --glass-saturate: 210%;
+  --glass-brightness: 1.08;
+  --glass-contrast: 1.04;
+  --glass-specular: 0.2;
+  --glass-ambient-opacity: 0.75;
   color-scheme: light;
 }
 
@@ -77,18 +100,29 @@
   --bone-dim: #475569;
   --graphite: #64748b;
   --graphite-dim: #94a3b8;
-  --topbar-bg: rgba(255, 255, 255, 0.55);
+  --topbar-bg: rgba(255, 255, 255, 0.38);
   --grain-opacity: 0.03;
   --shadow-soft: rgba(15, 23, 42, 0.12);
   --halation-blend: multiply;
-  --glass-bg: rgba(255, 255, 255, 0.62);
-  --glass-bg-hover: rgba(255, 255, 255, 0.78);
-  --glass-bg-strong: rgba(248, 250, 252, 0.88);
-  --glass-border: rgba(255, 255, 255, 0.75);
-  --glass-border-soft: rgba(15, 23, 42, 0.06);
-  --glass-shadow: 0 12px 36px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
-  --glass-blur: 30px;
-  --glass-saturate: 160%;
+  --glass-bg: rgba(255, 255, 255, 0.46);
+  --glass-bg-hover: rgba(255, 255, 255, 0.62);
+  --glass-bg-strong: rgba(248, 250, 252, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.88);
+  --glass-border-soft: rgba(15, 23, 42, 0.08);
+  --glass-rim: rgba(255, 255, 255, 1);
+  --glass-shadow:
+    0 22px 56px rgba(15, 23, 42, 0.12),
+    0 8px 20px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.06);
+  --glass-blur-chrome: 24px;
+  --glass-blur: 42px;
+  --glass-blur-thick: 58px;
+  --glass-saturate: 205%;
+  --glass-brightness: 1.06;
+  --glass-contrast: 1.03;
+  --glass-specular: 0.22;
+  --glass-ambient-opacity: 0.7;
   color-scheme: light;
 }
 
@@ -103,7 +137,16 @@
 
 /* ==========================================================================
    LIQUID GLASS — Apple-style translucent surfaces (sitewide)
+   Modeled on Apple's three layers: highlight (specular rim), shadow (depth),
+   illumination (backdrop blur + saturation + brightness). Material tiers:
+   chrome (topbar) · regular (cards) · thick (menus).
    ========================================================================== */
+
+:root {
+  --glass-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness)) contrast(var(--glass-contrast));
+  --glass-filter-chrome: blur(var(--glass-blur-chrome)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness)) contrast(var(--glass-contrast));
+  --glass-filter-thick: blur(var(--glass-blur-thick)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness)) contrast(var(--glass-contrast));
+}
 
 .topbar,
 .case-card,
@@ -121,9 +164,89 @@
 .menu-toggle,
 .stat-callout,
 .topbar__nav.open {
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
   box-shadow: var(--glass-shadow);
+}
+
+.topbar,
+.theme-switcher,
+.menu-toggle,
+.credential-tag {
+  -webkit-backdrop-filter: var(--glass-filter-chrome);
+  backdrop-filter: var(--glass-filter-chrome);
+}
+
+.topbar__nav.open {
+  -webkit-backdrop-filter: var(--glass-filter-thick);
+  backdrop-filter: var(--glass-filter-thick);
+}
+
+/* Specular — whisper-thin top rim only; sits behind content */
+.topbar::after,
+.btn::after,
+.credential-tag::after,
+.theme-switcher::after,
+.mooddial::after,
+.diagram-card::after,
+.case-callout::after,
+.case-compare__col::after,
+.case-table-wrap::after,
+.menu-toggle::after,
+.stat-callout::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--glass-specular);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--glass-rim) 55%, transparent) 0%,
+    transparent 20%
+  );
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--glass-rim) 45%, transparent);
+}
+
+/* No specular on tiles, photos, or work cards — keeps text and imagery clean */
+.case-card::after,
+.bento-tile::after,
+.photo-frame::after {
+  display: none;
+}
+
+.topbar,
+.btn,
+.credential-tag,
+.theme-switcher,
+.mooddial,
+.diagram-card,
+.case-callout,
+.case-compare__col,
+.case-table-wrap,
+.menu-toggle,
+.stat-callout {
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-switcher__thumb::after {
+  display: none;
+}
+
+.topbar > *,
+.btn > *,
+.mooddial > *,
+.diagram-card > *,
+.case-callout > *,
+.case-compare__col > *,
+.case-table-wrap > *,
+.menu-toggle > *,
+.stat-callout > *,
+.credential-tag > * {
+  position: relative;
+  z-index: 1;
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
@@ -216,6 +339,24 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
   transition: background-color 0.5s ease, color 0.5s ease;
+  position: relative;
+}
+
+/* Ambient color field — gives glass something to lens/refract (Apple environmental spill) */
+body::after {
+  content: "";
+  position: fixed;
+  inset: -15%;
+  z-index: -1;
+  pointer-events: none;
+  opacity: var(--glass-ambient-opacity);
+  background:
+    radial-gradient(ellipse 52% 44% at 10% 14%, color-mix(in srgb, var(--cyan) 34%, transparent), transparent 72%),
+    radial-gradient(ellipse 46% 40% at 92% 10%, color-mix(in srgb, var(--signal-red) 26%, transparent), transparent 74%),
+    radial-gradient(ellipse 58% 48% at 72% 88%, color-mix(in srgb, var(--cyan) 18%, transparent), transparent 76%),
+    radial-gradient(ellipse 40% 36% at 18% 82%, color-mix(in srgb, var(--signal-red) 14%, transparent), transparent 78%);
+  filter: blur(56px);
+  transition: opacity 0.5s ease;
 }
 
 /* subtle grain texture for depth */
@@ -868,6 +1009,7 @@ section.tight { padding: 80px 0; }
   grid-template-columns: repeat(4, 1fr);
   grid-auto-rows: 160px;
   gap: 16px;
+  perspective: 1400px;
 }
 
 @media (max-width: 900px) {
@@ -888,8 +1030,9 @@ section.tight { padding: 80px 0; }
   justify-content: space-between;
   position: relative;
   overflow: hidden;
+  transform-style: preserve-3d;
   background: var(--glass-bg);
-  transition: transform 0.35s ease, border-color 0.35s ease, background 0.35s ease, box-shadow 0.35s ease;
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, background 0.35s ease, box-shadow 0.35s ease;
   isolation: isolate;
 }
 
@@ -900,9 +1043,18 @@ section.tight { padding: 80px 0; }
 }
 
 .case-card:hover {
-  transform: translateY(-4px);
   border-color: color-mix(in srgb, var(--card-glow, var(--cyan)) 55%, var(--glass-border));
   background: var(--glass-bg-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case-card {
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .case-card:hover {
+    transform: translateY(-2px);
+  }
 }
 
 .case-card__halation {
@@ -913,17 +1065,17 @@ section.tight { padding: 80px 0; }
   pointer-events: none;
   z-index: 0;
   border-radius: inherit;
-  opacity: 0.58;
+  opacity: 0.62;
   transition: opacity 0.55s ease;
 }
 
 .case-card.is-halation-visible .case-card__halation {
-  opacity: 0.82;
+  opacity: 0.84;
 }
 
 .case-card.is-halation-active .case-card__halation,
 .case-card:hover .case-card__halation {
-  opacity: 1;
+  opacity: 0.96;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -954,13 +1106,13 @@ section.tight { padding: 80px 0; }
   justify-content: space-between;
   align-items: flex-start;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .case-card h3,
 .case-card p {
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .case-card__tag {

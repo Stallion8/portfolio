@@ -170,7 +170,7 @@ if (isFinePointer && !prefersReducedMotion) {
       const rect = card.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width - 0.5;
       const y = (e.clientY - rect.top) / rect.height - 0.5;
-      card.style.transform = `translateY(-4px) rotateX(${y * -4}deg) rotateY(${x * 4}deg)`;
+      card.style.transform = `translateY(-6px) scale(1.01) rotateX(${y * -6.5}deg) rotateY(${x * 6.5}deg)`;
     });
     card.addEventListener('mouseleave', () => {
       card.style.transform = '';
@@ -307,6 +307,11 @@ if (topbar) {
     return theme === 'amoled' ? 1 : 0.72;
   }
 
+  function spaceDepth() {
+    const theme = document.documentElement.getAttribute('data-theme') || 'amoled';
+    return theme === 'amoled' ? 1 : 0.5;
+  }
+
   function drawBloom(ctx, x, y, radius, color, alpha, blend) {
     ctx.globalCompositeOperation = blend;
     const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
@@ -319,6 +324,42 @@ if (topbar) {
     ctx.fillStyle = grad;
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  function drawSpaceField(ctx, width, height, depth) {
+    const cx = width * 0.5;
+    const cy = height * 0.46;
+    const span = Math.max(width, height) * 0.78;
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, span);
+    grad.addColorStop(0, `rgba(6, 8, 18, ${0.42 * depth})`);
+    grad.addColorStop(0.55, `rgba(4, 5, 12, ${0.58 * depth})`);
+    grad.addColorStop(1, `rgba(2, 3, 8, ${0.68 * depth})`);
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, width, height);
+  }
+
+  function drawStar(ctx, x, y, star, t, intensity, hoverBoost) {
+    const twinkle = 0.86 + Math.sin(t * 1.35 + star.twinkle) * 0.14;
+    const alpha = (star.bright
+      ? 0.52 + hoverBoost * 0.18
+      : 0.28 + hoverBoost * 0.12) * twinkle * intensity;
+
+    if (star.bright) {
+      const halo = ctx.createRadialGradient(x, y, 0, x, y, star.r * 2.4);
+      halo.addColorStop(0, `rgba(255, 255, 255, ${Math.min(alpha * 0.55, 0.5)})`);
+      halo.addColorStop(0.45, `rgba(210, 228, 255, ${alpha * 0.12})`);
+      halo.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = halo;
+      ctx.beginPath();
+      ctx.arc(x, y, star.r * 2.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.beginPath();
+    ctx.arc(x, y, star.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(alpha, 0.95)})`;
     ctx.fill();
   }
 
@@ -339,11 +380,10 @@ if (topbar) {
     const pulse = 1 + Math.sin(t * 0.48 + phase) * 0.06;
     const tint = mixRgb(glow, secondary, 0.38 + Math.sin(t * 0.22 + phase) * 0.12);
 
-    drawBloom(ctx, x, y, base * 0.92 * pulse, glow, 0.2 * s, blend);
-    drawBloom(ctx, x, y, base * 0.68 * pulse, tint, 0.28 * s, blend);
-    drawBloom(ctx, x, y, base * 0.48 * pulse, glow, 0.38 * s, blend);
-    drawBloom(ctx, x, y, base * 0.3 * pulse, tint, 0.26 * s, blend);
-    drawBloom(ctx, x, y, base * 0.16 * pulse, { r: 255, g: 255, b: 255 }, 0.22 * s, blend);
+    drawBloom(ctx, x, y, base * 0.92 * pulse, glow, 0.11 * s, blend);
+    drawBloom(ctx, x, y, base * 0.68 * pulse, tint, 0.13 * s, blend);
+    drawBloom(ctx, x, y, base * 0.48 * pulse, glow, 0.15 * s, blend);
+    drawBloom(ctx, x, y, base * 0.3 * pulse, tint, 0.1 * s, blend);
   }
 
   function ensureLoop() {
@@ -387,15 +427,19 @@ if (topbar) {
         canvas.style.width = this.width + 'px';
         canvas.style.height = this.height + 'px';
         this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
-        const count = Math.min(120, Math.floor((this.width * this.height) / 1400));
-        this.stars = Array.from({ length: count }, () => ({
-          x: Math.random(),
-          y: Math.random(),
-          r: Math.random() * 1.05 + 0.2,
-          twinkle: Math.random() * Math.PI * 2,
-          drift: Math.random() * Math.PI * 2,
-          speed: Math.random() * 0.35 + 0.12
-        }));
+        const count = Math.min(168, Math.floor((this.width * this.height) / 1050));
+        this.stars = Array.from({ length: count }, () => {
+          const bright = Math.random() < 0.14;
+          return {
+            x: Math.random(),
+            y: Math.random(),
+            r: bright ? Math.random() * 0.55 + 0.85 : Math.random() * 0.45 + 0.28,
+            bright,
+            twinkle: Math.random() * Math.PI * 2,
+            drift: Math.random() * Math.PI * 2,
+            speed: Math.random() * 0.22 + 0.08
+          };
+        });
       },
       idlePoint(t) {
         const p = this.phase;
@@ -438,31 +482,29 @@ if (topbar) {
         card.classList.toggle('is-halation-active', this.hoverBlend > 0.08);
 
         const intensity = themeIntensity();
+        const depth = spaceDepth();
         const glow = parseGlowColor(card);
         const secondary = glow.r > 180
           ? { r: 53, g: 228, b: 224 }
           : { r: 255, g: 45, b: 66 };
-        const blend = getComputedStyle(document.documentElement).getPropertyValue('--halation-blend').trim() || 'screen';
+        const halationBlend = getComputedStyle(document.documentElement).getPropertyValue('--halation-blend').trim() || 'screen';
         const hx = this.x * width;
         const hy = this.y * height;
         const base = Math.max(width, height);
 
-        drawGalaxyBlob(ctx, hx, hy, base, glow, secondary, strength, intensity, blend, t, this.phase);
+        drawSpaceField(ctx, width, height, depth);
+        drawGalaxyBlob(ctx, hx, hy, base, glow, secondary, strength, intensity, halationBlend, t, this.phase);
 
         ctx.globalCompositeOperation = 'source-over';
         this.stars.forEach(star => {
-          star.x += Math.sin(t * star.speed + star.drift) * 0.00012;
-          star.y += Math.cos(t * star.speed * 0.85 + star.drift) * 0.0001;
+          star.x += Math.sin(t * star.speed + star.drift) * 0.00006;
+          star.y += Math.cos(t * star.speed * 0.85 + star.drift) * 0.00005;
           if (star.x < 0) star.x += 1;
           if (star.x > 1) star.x -= 1;
           if (star.y < 0) star.y += 1;
           if (star.y > 1) star.y -= 1;
 
-          const alpha = (0.14 + Math.sin(t * 1.6 + star.twinkle) * 0.14 + strength * 0.1) * intensity;
-          ctx.beginPath();
-          ctx.arc(star.x * width, star.y * height, star.r, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-          ctx.fill();
+          drawStar(ctx, star.x * width, star.y * height, star, t, intensity, this.hoverBlend);
         });
       }
     };
