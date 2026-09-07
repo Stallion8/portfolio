@@ -343,8 +343,10 @@ if (topbar) {
   function drawStar(ctx, x, y, star, t, intensity, hoverBoost) {
     const twinkle = 0.86 + Math.sin(t * 1.35 + star.twinkle) * 0.14;
     const alpha = (star.bright
-      ? 0.52 + hoverBoost * 0.18
-      : 0.28 + hoverBoost * 0.12) * twinkle * intensity;
+      ? 0.55 + hoverBoost * 0.18
+      : star.medium
+        ? 0.4 + hoverBoost * 0.14
+        : 0.3 + hoverBoost * 0.1) * twinkle * intensity;
 
     if (star.bright) {
       const halo = ctx.createRadialGradient(x, y, 0, x, y, star.r * 2.4);
@@ -360,6 +362,15 @@ if (topbar) {
     ctx.beginPath();
     ctx.arc(x, y, star.r, 0, Math.PI * 2);
     ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(alpha, 0.95)})`;
+    ctx.fill();
+  }
+
+  function drawMicroStar(ctx, x, y, star, t, intensity, hoverBoost) {
+    const twinkle = 0.92 + Math.sin(t * 2.1 + star.twinkle) * 0.08;
+    const alpha = (0.2 + hoverBoost * 0.08) * twinkle * intensity;
+    ctx.beginPath();
+    ctx.arc(x, y, star.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(215, 225, 245, ${alpha})`;
     ctx.fill();
   }
 
@@ -417,6 +428,41 @@ if (topbar) {
       pointerActive: false,
       visible: false,
       stars: [],
+      microStars: [],
+      lastWidth: 0,
+      lastHeight: 0,
+      initStarfield() {
+        const count = Math.min(168, Math.floor((this.width * this.height) / 1050));
+        this.stars = Array.from({ length: count }, () => {
+          const roll = Math.random();
+          const bright = roll > 0.86;
+          const medium = !bright && roll > 0.52;
+          return {
+            x: Math.random(),
+            y: Math.random(),
+            r: bright
+              ? Math.random() * 0.55 + 0.85
+              : medium
+                ? Math.random() * 0.35 + 0.42
+                : Math.random() * 0.3 + 0.32,
+            bright,
+            medium,
+            twinkle: Math.random() * Math.PI * 2,
+            drift: Math.random() * Math.PI * 2,
+            speed: Math.random() * 0.22 + 0.08,
+            phase: Math.random() * Math.PI * 2
+          };
+        });
+        const microCount = Math.min(340, Math.floor((this.width * this.height) / 400));
+        this.microStars = Array.from({ length: microCount }, () => ({
+          x: Math.random(),
+          y: Math.random(),
+          r: Math.random() * 0.2 + 0.1,
+          twinkle: Math.random() * Math.PI * 2,
+          phase: Math.random() * Math.PI * 2,
+          speed: Math.random() * 0.18 + 0.04
+        }));
+      },
       resize() {
         const rect = card.getBoundingClientRect();
         this.dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -427,19 +473,13 @@ if (topbar) {
         canvas.style.width = this.width + 'px';
         canvas.style.height = this.height + 'px';
         this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
-        const count = Math.min(168, Math.floor((this.width * this.height) / 1050));
-        this.stars = Array.from({ length: count }, () => {
-          const bright = Math.random() < 0.14;
-          return {
-            x: Math.random(),
-            y: Math.random(),
-            r: bright ? Math.random() * 0.55 + 0.85 : Math.random() * 0.45 + 0.28,
-            bright,
-            twinkle: Math.random() * Math.PI * 2,
-            drift: Math.random() * Math.PI * 2,
-            speed: Math.random() * 0.22 + 0.08
-          };
-        });
+        const sizeChanged = Math.abs(this.width - this.lastWidth) > 2
+          || Math.abs(this.height - this.lastHeight) > 2;
+        if (!this.stars.length || sizeChanged) {
+          this.initStarfield();
+          this.lastWidth = this.width;
+          this.lastHeight = this.height;
+        }
       },
       idlePoint(t) {
         const p = this.phase;
@@ -493,12 +533,24 @@ if (topbar) {
         const base = Math.max(width, height);
 
         drawSpaceField(ctx, width, height, depth);
+
+        ctx.globalCompositeOperation = 'source-over';
+        this.microStars.forEach(star => {
+          star.x += Math.sin(t * star.speed + star.phase) * 0.00004;
+          star.y += Math.cos(t * star.speed * 0.9 + star.phase) * 0.000035;
+          if (star.x < 0) star.x += 1;
+          if (star.x > 1) star.x -= 1;
+          if (star.y < 0) star.y += 1;
+          if (star.y > 1) star.y -= 1;
+          drawMicroStar(ctx, star.x * width, star.y * height, star, t, intensity, this.hoverBlend);
+        });
+
         drawGalaxyBlob(ctx, hx, hy, base, glow, secondary, strength, intensity, halationBlend, t, this.phase);
 
         ctx.globalCompositeOperation = 'source-over';
         this.stars.forEach(star => {
           star.x += Math.sin(t * star.speed + star.drift) * 0.00006;
-          star.y += Math.cos(t * star.speed * 0.85 + star.drift) * 0.00005;
+          star.y += Math.cos(t * star.speed * 0.85 + star.phase) * 0.00005;
           if (star.x < 0) star.x += 1;
           if (star.x > 1) star.x -= 1;
           if (star.y < 0) star.y += 1;
@@ -511,7 +563,6 @@ if (topbar) {
 
     card.addEventListener('mouseenter', () => {
       state.pointerActive = true;
-      state.resize();
     });
 
     card.addEventListener('mousemove', (e) => {
@@ -526,7 +577,6 @@ if (topbar) {
 
     card.addEventListener('touchstart', (e) => {
       state.pointerActive = true;
-      state.resize();
       if (e.touches[0]) {
         const rect = card.getBoundingClientRect();
         state.pointerX = (e.touches[0].clientX - rect.left) / rect.width;

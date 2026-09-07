@@ -1207,7 +1207,46 @@ footer {
   font-size: 12px;
   color: var(--graphite);
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px 20px;
+}
+
+.footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 24px;
+  margin-top: 28px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.footer__links a {
+  color: var(--graphite);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.25s ease;
+}
+
+.footer__links a:hover {
+  color: var(--cyan);
+}
+
+.link-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.link-arrow,
+.nav-arrow {
+  font-family: var(--font-mono);
+  line-height: 1;
+  opacity: 0.9;
+}
+
+.topbar__nav a.nav-link--external .nav-arrow,
+.topbar__nav a.nav-link--download .nav-arrow {
+  font-size: 0.92em;
 }
 
 /* ==========================================================================
