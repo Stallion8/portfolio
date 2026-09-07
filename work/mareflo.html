@@ -27,6 +27,7 @@
   <div class="eyebrow">/work/mareflo</div>
   <div class="case-hero__tags">
     <span class="credential-tag">Personal Project</span>
+    <span class="credential-tag">Interaction Design</span>
     <span class="credential-tag">Android</span>
     <span class="credential-tag">Solo-built</span>
   </div>
@@ -39,31 +40,67 @@
 
 <section class="tight">
   <div class="container prose reveal">
-    <p>
-      Mareflo is a passion project born from a simple frustration: binary reactions — like/dislike,
-      thumbs up/down — don't capture how gamers actually feel about a clip, a play, or a moment. A
-      clutch win and a lucky win might both get a "like," but they're not the same feeling at all.
+    <div class="eyebrow">01 — Context</div>
+    <h2 style="font-size: clamp(24px, 3.2vw, 34px); margin-top: 14px;">Gaming social is broken — and binary reactions don't help.</h2>
+    <p style="margin-top: 18px;">
+      Mareflo started from a frustration I kept running into as a player and designer: mainstream social
+      platforms weren't built for gaming culture. Clips get buried, banter gets flagged as harassment,
+      and a single <strong>like</strong> can't distinguish a clutch win from a lucky one.
     </p>
     <p>
-      So I designed <strong>MoodDial</strong> — an interaction pattern that replaces the single-tap
-      reaction with dual emoji sliders, letting a player express <em>what</em> they felt and
-      <em>how much</em> in a single gesture.
+      The core problem isn't just toxicity — it's <strong>context blindness</strong>. Platforms punish
+      intent they can't read. Mareflo's bet: understand emotional context instead of flattening everything
+      into engagement metrics.
     </p>
-    <p>
-      The design question underneath it: how do you capture nuance without adding friction? A reaction
-      has to happen in the two seconds after a clip ends, or it doesn't happen at all. Two sliders,
-      pre-positioned at neutral, let someone express something genuinely specific with the same number of
-      taps as a single like button — just a drag instead of a tap.
-    </p>
-    <p>
-      I treated the whole build as a design problem first, not a feature list: research the actual
-      reaction moment, prototype the gesture until it felt fast rather than fiddly, then build the rest of
-      the social platform — feed, profile, clip sharing — around that one interaction being right.
-    </p>
+  </div>
+
+  <div class="container reveal">
+    <div class="case-compare">
+      <div class="case-compare__col case-compare__col--old">
+        <h4>Traditional social</h4>
+        <ul>
+          <li>Likes measure popularity, not feeling</li>
+          <li>Keyword moderation misses gaming banter</li>
+          <li>Gaming content buried in general feeds</li>
+          <li>Algorithms optimize outrage and addiction</li>
+        </ul>
+      </div>
+      <div class="case-compare__col case-compare__col--new">
+        <h4>Mareflo approach</h4>
+        <ul>
+          <li>MoodDial captures emotional nuance</li>
+          <li>Context-aware moderation (friends vs strangers)</li>
+          <li>Built for gamers and virtual photographers</li>
+          <li>Quality-of-resonance over vanity metrics</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="container prose reveal">
+    <div class="case-example">
+      <strong>Gaming banter:</strong> "Get rekt noob! GG EZ!" between friends → playful, not harassment.<br>
+      <strong>Constructive critique:</strong> "This game is disappointing" → downbeat feedback, not hidden negativity.<br>
+      <strong>Shared struggle:</strong> A Dark Souls death → downbeat solidarity, not a confusing heart icon.
+    </div>
   </div>
 </section>
 
 <section class="tight">
+  <div class="container prose reveal">
+    <div class="eyebrow">02 — Interaction design</div>
+    <h2 style="font-size: clamp(24px, 3.2vw, 34px); margin-top: 14px;">MoodDial — nuance without friction.</h2>
+    <p style="margin-top: 18px;">
+      So I designed <strong>MoodDial</strong> — an interaction pattern that replaces the single-tap
+      reaction with dual emoji sliders. A player expresses <em>what</em> they felt and <em>how much</em>
+      in one gesture — fast enough to happen in the two seconds after a clip ends.
+    </p>
+    <p>
+      The portfolio demo below uses a simplified slider model. In the full product, MoodDial expands into
+      upbeat and downbeat emotional contexts — each with weighted emoji reactions that feed creator
+      analytics and feed ranking differently than a like count ever could.
+    </p>
+  </div>
   <div class="container reveal">
     <div class="section-head">
       <h2>Try it</h2>
@@ -88,7 +125,72 @@
 
 <section class="tight">
   <div class="container prose reveal">
-    <p>
+    <div class="eyebrow">03 — Platform thinking</div>
+    <h2 style="font-size: clamp(24px, 3.2vw, 34px); margin-top: 14px;">Context over content — the system around MoodDial.</h2>
+    <p style="margin-top: 18px;">
+      MoodDial is the signature interaction, but Mareflo is a full platform thesis: emotionally intelligent
+      social design for gamers. These are the supporting systems I designed and built around the reaction
+      moment.
+    </p>
+  </div>
+
+  <div class="container reveal">
+    <div class="case-callout-grid">
+      <div class="case-callout">
+        <h3>Context-aware moderation</h3>
+        <p>Relationship-aware AI distinguishes friends trash-talking from strangers harassing — gaming slang
+        like "GG EZ" protected when context supports it.</p>
+      </div>
+      <div class="case-callout">
+        <h3>Vibe compatibility</h3>
+        <p>Follow graph weighted by emotional alignment, not follower count — surfacing people whose
+        reactions and play style actually match yours.</p>
+      </div>
+      <div class="case-callout">
+        <h3>Emotional metrics</h3>
+        <p>Creators see <em>why</em> content resonated — fire, laughter, heartbreak — not just that it got
+        engagement. Actionable insight instead of a vanity number.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container reveal">
+    <div class="case-table-wrap">
+      <table class="case-table">
+        <thead>
+          <tr>
+            <th>Principle</th>
+            <th>What it means in practice</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Context over content</td>
+            <td>Same words, different relationships → different moderation and feed treatment</td>
+          </tr>
+          <tr>
+            <td>Emotion over engagement</td>
+            <td>Rank and surface by resonance depth, not raw like velocity</td>
+          </tr>
+          <tr>
+            <td>Community over clout</td>
+            <td>Vibe match and mood balance over follower status</td>
+          </tr>
+          <tr>
+            <td>Adaptation over assumption</td>
+            <td>UI and themes respond to emotional state, not one static chrome</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="tight">
+  <div class="container prose reveal">
+    <div class="eyebrow">04 — Build</div>
+    <h2 style="font-size: clamp(24px, 3.2vw, 34px); margin-top: 14px;">Solo, AI-augmented, shipped.</h2>
+    <p style="margin-top: 18px;">
       I built the entire MVP myself using an AI-augmented workflow: <strong>Claude</strong> for product
       thinking and content, <strong>Cursor</strong> for implementation, <strong>Figma Make</strong> for
       rapid prototyping, and <strong>Replit</strong> for deployment — going from concept to a working

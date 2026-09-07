@@ -6,7 +6,8 @@
 <title>Wayfair.com UX Revamp | Pratik Tamgadge</title>
 <meta name="description" content="A navigation and product-discovery overhaul for Wayfair.com, styled around a bento-box layout inspired by Chinese e-commerce UI.">
 <script src="../assets/theme-init.js"></script>
-<link rel="stylesheet" href="../assets/styles.css">
+<link rel="stylesheet" href="../assets/styles.css?v=wireframe">
+<link rel="stylesheet" href="../assets/wayfair-wireframe.css?v=1">
 </head>
 <body>
 
@@ -51,6 +52,151 @@
       keep it scannable. Applying that logic to Wayfair meant reworking the grid system itself, not just
       restyling existing components.
     </p>
+    <p>
+      The revamp focused on three moves: a modular <strong>bento hero</strong> for featured categories,
+      tighter product tiles that expose decision-critical metadata upfront, and a discover grid that lets
+      shoppers scan more options per viewport without losing hierarchy.
+    </p>
+  </div>
+
+  <div class="container reveal">
+    <div class="section-head">
+      <h2>Inspiration</h2>
+      <span class="meta">BENTO REFERENCE STUDY</span>
+    </div>
+    <p class="prose" style="max-width: 720px; margin-bottom: 24px;">
+      Before touching Wayfair's UI, I prototyped a bento-box marketplace layout — studying how
+      high-density Chinese e-commerce patterns organize category rails, hero modules, filter chips, and
+      discover grids. This wireframe became the structural reference for modularity and scan rhythm in the
+      final revamp.
+    </p>
+    <div class="inspiration-block">
+      <div class="ref-section-grid">
+        <figure class="ref-panel reveal">
+          <figcaption class="ref-panel__label">01 — Hero, search &amp; category rail</figcaption>
+          <div class="ref-panel__frame ref-panel__frame--embed">
+            <div class="wireframe-embed wireframe-embed--narrow" aria-hidden="true">
+              <div class="wf-wrap">
+                <div class="util-bar">
+                  <span>Ship to: IN</span><span>English</span><span>Track order</span><span>Help</span>
+                </div>
+                <header class="wf-block">
+                  <div class="header-row">
+                    <div class="logo-ph">LOGO</div>
+                    <div class="search-ph"><div class="bar"></div></div>
+                    <div class="icon-cluster">
+                      <div class="icon-ph"></div><div class="icon-ph"></div><div class="icon-ph"></div>
+                    </div>
+                  </div>
+                </header>
+                <section class="wf-block">
+                  <div class="cat-row">
+                    <div class="cat-icon"><div class="ph-circle"></div><div class="bar w60 center"></div></div>
+                    <div class="cat-icon"><div class="ph-circle"></div><div class="bar w60 center"></div></div>
+                    <div class="cat-icon"><div class="ph-circle"></div><div class="bar w60 center"></div></div>
+                    <div class="cat-icon"><div class="ph-circle"></div><div class="bar w60 center"></div></div>
+                    <div class="cat-icon"><div class="ph-circle"></div><div class="bar w60 center"></div></div>
+                    <div class="cat-icon"><div class="ph-circle"></div><div class="bar w60 center"></div></div>
+                    <div class="cat-icon"><div class="ph-circle"></div><div class="bar w60 center"></div></div>
+                    <div class="cat-icon"><div class="ph-circle"></div><div class="bar w60 center"></div></div>
+                    <div class="cat-icon"><div class="ph-circle"></div><div class="bar w60 center"></div></div>
+                    <div class="cat-icon"><div class="ph-circle"></div><div class="bar w60 center"></div></div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </figure>
+        <figure class="ref-panel reveal">
+          <figcaption class="ref-panel__label">02 — Category &amp; style modules</figcaption>
+          <div class="ref-panel__frame ref-panel__frame--embed">
+            <div class="wireframe-embed wireframe-embed--narrow" aria-hidden="true">
+              <div class="wf-wrap">
+                <div class="ticker">Limited-time offers — free shipping — flash sale live</div>
+                <section class="wf-block" style="padding-top:12px;">
+                  <div class="banner-grid">
+                    <div class="banner-ph banner-main"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>
+                    <div class="banner-ph"></div>
+                    <div class="banner-ph"></div>
+                  </div>
+                </section>
+                <section class="wf-block" style="padding-top:12px;">
+                  <div class="section-label">Flash deals</div>
+                  <div class="timer-row">
+                    <div class="timer-box">02</div><div class="timer-box">14</div><div class="timer-box">37</div>
+                  </div>
+                  <div class="scroll-row">
+                    <div class="p-card flash"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div><div class="bar w90 progress"></div></div>
+                    <div class="p-card flash"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div><div class="bar w90 progress"></div></div>
+                    <div class="p-card flash"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div><div class="bar w90 progress"></div></div>
+                    <div class="p-card flash"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div><div class="bar w90 progress"></div></div>
+                  </div>
+                </section>
+                <section class="wf-block" style="padding-top:12px;">
+                  <div class="section-label">Shop by category</div>
+                  <div class="cat-tile-grid">
+                    <div class="cat-tile"><div class="ph-square"></div><div class="bar w70 center"></div></div>
+                    <div class="cat-tile"><div class="ph-square"></div><div class="bar w70 center"></div></div>
+                    <div class="cat-tile"><div class="ph-square"></div><div class="bar w70 center"></div></div>
+                    <div class="cat-tile"><div class="ph-square"></div><div class="bar w70 center"></div></div>
+                    <div class="cat-tile"><div class="ph-square"></div><div class="bar w70 center"></div></div>
+                    <div class="cat-tile"><div class="ph-square"></div><div class="bar w70 center"></div></div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </figure>
+        <figure class="ref-panel ref-panel--wide reveal">
+          <figcaption class="ref-panel__label">03 — Discover density &amp; card grids</figcaption>
+          <div class="ref-panel__frame ref-panel__frame--embed">
+            <div class="wireframe-embed" aria-hidden="true">
+              <div class="wf-wrap">
+                <section class="wf-block" style="padding-top:12px;">
+                  <div class="section-label">Recommended for you</div>
+                  <div class="p-grid">
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                  </div>
+                </section>
+                <section class="wf-block" style="padding-top:12px;">
+                  <div class="section-label">Trending now</div>
+                  <div class="p-grid">
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                    <div class="p-card"><div class="ph-img"></div><div class="bar w80"></div><div class="bar w40 price"></div></div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </figure>
+      </div>
+      <p class="case-caption">
+        Live HTML wireframe slices — vector-sharp at any zoom, cropped by layout zone. Each band informed a
+        different layer of the Wayfair revamp: navigation rhythm, modular category blocks, and discover-grid density.
+        <a href="../assets/wayfair-wireframe.html" target="_blank" rel="noopener" style="color: var(--cyan);">View full wireframe</a>
+      </p>
+    </div>
   </div>
 
   <div class="container reveal">
@@ -70,6 +216,10 @@
       <div class="bento-tile">
         <div class="k">Design influence</div>
         <div class="v">Chinese e-commerce UI</div>
+      </div>
+      <div class="bento-tile">
+        <div class="k">Reference</div>
+        <div class="v">Bento wireframe study</div>
       </div>
     </div>
   </div>
