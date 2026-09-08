@@ -170,7 +170,7 @@ if (isFinePointer && !prefersReducedMotion) {
       const rect = card.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width - 0.5;
       const y = (e.clientY - rect.top) / rect.height - 0.5;
-      card.style.transform = `translateY(-6px) scale(1.01) rotateX(${y * -6.5}deg) rotateY(${x * 6.5}deg)`;
+      card.style.transform = `translateY(-7.5px) scale(1.013) rotateX(${y * -8}deg) rotateY(${x * 8}deg)`;
     });
     card.addEventListener('mouseleave', () => {
       card.style.transform = '';
