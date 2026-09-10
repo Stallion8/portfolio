@@ -170,7 +170,7 @@
       if (dist > radius || dist < 1) return;
 
       const falloff = 1 - dist / radius;
-      const force = falloff * falloff * falloff * MOUSE_PULL;
+      const force = falloff * falloff * falloff * MOUSE_PULL * simStep;
       node.vx += (dx / dist) * force;
       node.vy += (dy / dist) * force;
     });
@@ -264,7 +264,7 @@
         const dist = Math.hypot(dx, dy) || 0.001;
         if (dist < STICK_RADIUS) {
           const k = (STICK_RADIUS - dist) / STICK_RADIUS;
-          const force = k * k * STICK_REPULSE / (dist * dist);
+          const force = k * k * STICK_REPULSE / (dist * dist) * simStep;
           node.vx += (dx / dist) * force;
           node.vy += (dy / dist) * force;
         }
@@ -272,11 +272,21 @@
     });
   }
 
-  function integrate() {
-    t += 0.016;
-    const springK = 0.013;
-    const damp = 0.86;
-    const homeK = 0.004;
+  let lastLoopTs = 0;
+  let simStep = 1;
+
+  function motionScale() {
+    const v = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--motion-scale'));
+    return Number.isFinite(v) && v > 0 ? v : 1;
+  }
+
+  function integrate(dt) {
+    const ms = motionScale();
+    simStep = Math.min(dt * 60 * ms, 4);
+    t += 0.016 * simStep;
+    const springK = 0.013 * simStep;
+    const damp = Math.pow(0.86, simStep);
+    const homeK = 0.004 * simStep;
 
     for (let s = 0; s < springs.length; s++) {
       const a = nodes[springs[s].i];
@@ -304,8 +314,8 @@
       node.vy += (targetY - node.y) * homeK;
 
       const coh = ropeCohesion(node);
-      node.vx += coh.x;
-      node.vy += coh.y;
+      node.vx += coh.x * simStep;
+      node.vy += coh.y * simStep;
 
       node.vx *= damp;
       node.vy *= damp;
@@ -374,8 +384,8 @@
   function drawPointerAura() {
     if (!pointer.active) return;
 
-    pointer.smoothX += (pointer.x - pointer.smoothX) * 0.14;
-    pointer.smoothY += (pointer.y - pointer.smoothY) * 0.14;
+    pointer.smoothX += (pointer.x - pointer.smoothX) * Math.min(1, 0.14 * simStep);
+    pointer.smoothY += (pointer.y - pointer.smoothY) * Math.min(1, 0.14 * simStep);
 
     const pulse = 0.85 + Math.sin(t * 2.2) * 0.08;
     const r = POINTER_AURA * pulse;
@@ -455,12 +465,14 @@
     drawLegend();
   }
 
-  function loop() {
+  function loop(ts) {
     if (!visible) {
       rafId = 0;
       return;
     }
-    integrate();
+    const dt = lastLoopTs ? Math.min((ts - lastLoopTs) / 1000, 0.05) : 1 / 60;
+    lastLoopTs = ts;
+    integrate(dt);
     rafId = requestAnimationFrame(loop);
   }
 

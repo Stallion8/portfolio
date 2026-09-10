@@ -1,16 +1,43 @@
 // ==========================================================================
-// Mobile nav toggle
+// Motion scale — detect refresh rate, normalize animation feel across displays
 // ==========================================================================
-const menuToggle = document.querySelector('.menu-toggle');
-const topbarNav = document.querySelector('.topbar__nav');
-if (menuToggle && topbarNav) {
-  menuToggle.addEventListener('click', () => {
-    topbarNav.classList.toggle('open');
-  });
-  topbarNav.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => topbarNav.classList.remove('open'));
-  });
-}
+const motion = {
+  hz: 60,
+  scale: 1,
+  ready: false,
+  lastTs: 0,
+  dt(ts) {
+    const dt = this.lastTs ? Math.min((ts - this.lastTs) / 1000, 0.05) : 1 / 60;
+    this.lastTs = ts;
+    return dt;
+  },
+  lerp(current, target, rate, dt) {
+    const k = 1 - Math.exp(-rate * dt * this.scale);
+    return current + (target - current) * k;
+  }
+};
+
+(function detectRefreshRate() {
+  const samples = [];
+  let last = 0;
+  function sample(ts) {
+    if (last) {
+      const frameMs = ts - last;
+      if (frameMs > 5 && frameMs < 50) samples.push(1000 / frameMs);
+    }
+    last = ts;
+    if (samples.length < 32) {
+      requestAnimationFrame(sample);
+      return;
+    }
+    const avg = samples.reduce((a, b) => a + b, 0) / samples.length;
+    motion.hz = Math.round(avg);
+    motion.scale = avg < 85 ? Math.min(2.4, 120 / avg) : 1;
+    motion.ready = true;
+    document.documentElement.style.setProperty('--motion-scale', motion.scale.toFixed(2));
+  }
+  requestAnimationFrame(sample);
+})();
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -279,6 +306,77 @@ if (topbar) {
 })();
 
 // ==========================================================================
+// Mobile nav — portal menu outside topbar on small screens (iOS Safari fix)
+// ==========================================================================
+(function initMobileNav() {
+  const topbar = document.querySelector('.topbar');
+  const nav = document.querySelector('.topbar__nav');
+  const toggle = document.querySelector('.menu-toggle');
+  if (!topbar || !nav || !toggle) return;
+
+  const mq = window.matchMedia('(max-width: 720px)');
+  let placeholder = null;
+
+  function setTopbarHeight() {
+    document.documentElement.style.setProperty('--topbar-height', `${topbar.offsetHeight}px`);
+  }
+
+  function closeMenu() {
+    nav.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('nav-open');
+  }
+
+  function openMenu() {
+    nav.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('nav-open');
+  }
+
+  function restoreNavToTopbar() {
+    const right = topbar.querySelector('.topbar__right');
+    if (right) right.insertBefore(nav, toggle);
+    else if (placeholder) placeholder.parentNode.insertBefore(nav, placeholder);
+  }
+
+  function syncNavPlacement() {
+    setTopbarHeight();
+    if (mq.matches) {
+      if (!placeholder) {
+        placeholder = document.createComment('nav-placeholder');
+        nav.parentNode.insertBefore(placeholder, nav);
+        document.body.appendChild(nav);
+        nav.classList.add('topbar__nav--mobile');
+      }
+    } else if (placeholder) {
+      closeMenu();
+      nav.classList.remove('topbar__nav--mobile');
+      restoreNavToTopbar();
+      placeholder.remove();
+      placeholder = null;
+    }
+  }
+
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (nav.classList.contains('open')) closeMenu();
+    else openMenu();
+  });
+  nav.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', closeMenu);
+  });
+  document.addEventListener('click', (e) => {
+    if (!mq.matches || !nav.classList.contains('open')) return;
+    if (!nav.contains(e.target) && !toggle.contains(e.target)) closeMenu();
+  });
+
+  mq.addEventListener('change', syncNavPlacement);
+  window.addEventListener('resize', setTopbarHeight);
+  syncNavPlacement();
+})();
+
+// ==========================================================================
 // Work tile galaxy halation — idle fluid drift + mouse-synced, tiles only
 // ==========================================================================
 (function initTileHalation() {
@@ -494,16 +592,17 @@ if (topbar) {
             + Math.sin(t * 0.13 + p) * 0.04
         };
       },
-      render(ts) {
+      render(ts, dt) {
         if (!this.visible) return;
 
+        const step = dt * motion.scale;
         const t = ts * 0.001;
         const { ctx, width, height } = this;
         ctx.clearRect(0, 0, width, height);
 
         const idle = this.idlePoint(t);
         const hovered = card.matches(':hover');
-        this.hoverBlend += ((hovered ? 1 : 0) - this.hoverBlend) * 0.07;
+        this.hoverBlend = motion.lerp(this.hoverBlend, hovered ? 1 : 0, 9.5, dt);
 
         const targetX = this.pointerActive
           ? this.pointerX * this.hoverBlend + idle.x * (1 - this.hoverBlend)
@@ -514,8 +613,8 @@ if (topbar) {
 
         this.tx = targetX;
         this.ty = targetY;
-        this.x += (this.tx - this.x) * 0.055;
-        this.y += (this.ty - this.y) * 0.055;
+        this.x = motion.lerp(this.x, this.tx, 7.5, dt);
+        this.y = motion.lerp(this.y, this.ty, 7.5, dt);
 
         const strength = IDLE_STRENGTH + (1 - IDLE_STRENGTH) * this.hoverBlend;
         card.classList.add('is-halation-visible');
@@ -536,8 +635,8 @@ if (topbar) {
 
         ctx.globalCompositeOperation = 'source-over';
         this.microStars.forEach(star => {
-          star.x += Math.sin(t * star.speed + star.phase) * 0.00004;
-          star.y += Math.cos(t * star.speed * 0.9 + star.phase) * 0.000035;
+          star.x += Math.sin(t * star.speed + star.phase) * 0.00004 * step * 60;
+          star.y += Math.cos(t * star.speed * 0.9 + star.phase) * 0.000035 * step * 60;
           if (star.x < 0) star.x += 1;
           if (star.x > 1) star.x -= 1;
           if (star.y < 0) star.y += 1;
@@ -549,8 +648,8 @@ if (topbar) {
 
         ctx.globalCompositeOperation = 'source-over';
         this.stars.forEach(star => {
-          star.x += Math.sin(t * star.speed + star.drift) * 0.00006;
-          star.y += Math.cos(t * star.speed * 0.85 + star.phase) * 0.00005;
+          star.x += Math.sin(t * star.speed + star.drift) * 0.00006 * step * 60;
+          star.y += Math.cos(t * star.speed * 0.85 + star.phase) * 0.00005 * step * 60;
           if (star.x < 0) star.x += 1;
           if (star.x > 1) star.x -= 1;
           if (star.y < 0) star.y += 1;
@@ -616,8 +715,12 @@ if (topbar) {
     }
   });
 
+  let loopLastTs = 0;
   function loop(ts) {
-    [...activeTiles].forEach(state => state.render(ts));
+    const dt = loopLastTs ? Math.min((ts - loopLastTs) / 1000, 0.05) : 1 / 60;
+    loopLastTs = ts;
+    motion.lastTs = ts;
+    [...activeTiles].forEach(state => state.render(ts, dt));
     rafId = activeTiles.size ? requestAnimationFrame(loop) : 0;
   }
 })();
