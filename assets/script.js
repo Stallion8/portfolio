@@ -404,10 +404,10 @@ if (topbar) {
     ctx.globalCompositeOperation = blend;
     const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
     grad.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`);
-    grad.addColorStop(0.1, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.88})`);
-    grad.addColorStop(0.28, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.48})`);
-    grad.addColorStop(0.52, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.16})`);
-    grad.addColorStop(0.76, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.04})`);
+    grad.addColorStop(0.08, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.72})`);
+    grad.addColorStop(0.2, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.28})`);
+    grad.addColorStop(0.38, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.07})`);
+    grad.addColorStop(0.55, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.015})`);
     grad.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
     ctx.fillStyle = grad;
     ctx.beginPath();
@@ -479,10 +479,10 @@ if (topbar) {
     const pulse = 1 + Math.sin(t * 0.48 + phase) * 0.06;
     const tint = mixRgb(glow, secondary, 0.38 + Math.sin(t * 0.22 + phase) * 0.12);
 
-    drawBloom(ctx, x, y, base * 0.92 * pulse, glow, 0.11 * s, blend);
-    drawBloom(ctx, x, y, base * 0.68 * pulse, tint, 0.13 * s, blend);
-    drawBloom(ctx, x, y, base * 0.48 * pulse, glow, 0.15 * s, blend);
-    drawBloom(ctx, x, y, base * 0.3 * pulse, tint, 0.1 * s, blend);
+    drawBloom(ctx, x, y, base * 0.72 * pulse, glow, 0.05 * s, blend);
+    drawBloom(ctx, x, y, base * 0.5 * pulse, tint, 0.058 * s, blend);
+    drawBloom(ctx, x, y, base * 0.34 * pulse, glow, 0.066 * s, blend);
+    drawBloom(ctx, x, y, base * 0.22 * pulse, tint, 0.04 * s, blend);
   }
 
   function ensureLoop() {
@@ -623,6 +623,8 @@ if (topbar) {
 
         drawSpaceField(ctx, width, height, depth);
 
+        drawGalaxyBlob(ctx, hx, hy, base, glow, secondary, strength, intensity, halationBlend, t, this.phase);
+
         ctx.globalCompositeOperation = 'source-over';
         this.microStars.forEach(star => {
           star.x += Math.sin(t * star.speed + star.phase) * 0.00004 * step * 60;
@@ -634,9 +636,6 @@ if (topbar) {
           drawMicroStar(ctx, star.x * width, star.y * height, star, t, intensity, this.hoverBlend);
         });
 
-        drawGalaxyBlob(ctx, hx, hy, base, glow, secondary, strength, intensity, halationBlend, t, this.phase);
-
-        ctx.globalCompositeOperation = 'source-over';
         this.stars.forEach(star => {
           star.x += Math.sin(t * star.speed + star.drift) * 0.00006 * step * 60;
           star.y += Math.cos(t * star.speed * 0.85 + star.phase) * 0.00005 * step * 60;

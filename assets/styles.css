@@ -1037,6 +1037,81 @@ section.tight { padding: 80px 0; }
   grid-auto-rows: 160px;
   gap: 16px;
   perspective: 1400px;
+  position: relative;
+}
+
+.case-ship {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+  width: 56px;
+  visibility: hidden;
+}
+
+.case-ship__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  filter: brightness(0.72) contrast(1.08);
+}
+
+.case-ship__beacon {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #e8283a;
+  box-shadow:
+    0 0 2px rgba(255, 45, 66, 0.9),
+    0 0 5px rgba(255, 45, 66, 0.45);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  animation: ship-beacon-blink var(--blink-dur, 1.6s) infinite steps(1, end);
+  animation-delay: var(--blink-delay, 0s);
+}
+
+.case-ship__beacon--left {
+  left: 23%;
+  top: 7%;
+  --blink-dur: 14s;
+  --blink-delay: 0.4s;
+}
+
+.case-ship__beacon--center {
+  left: 50%;
+  top: 2%;
+  width: 2.5px;
+  height: 2.5px;
+  --blink-dur: 17s;
+  --blink-delay: 5.5s;
+}
+
+.case-ship__beacon--right {
+  left: 77%;
+  top: 7%;
+  --blink-dur: 15.5s;
+  --blink-delay: 9s;
+}
+
+@keyframes ship-beacon-blink {
+  0%, 6%, 100% { opacity: 0; }
+  8%, 14% { opacity: 1; }
+  18%, 24% { opacity: 0.15; }
+  28%, 34% { opacity: 0.95; }
+  40%, 48% { opacity: 0; }
+  52%, 58% { opacity: 0.7; }
+  64%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case-ship { display: none; }
 }
 
 @media (max-width: 900px) {
@@ -1188,13 +1263,13 @@ section.tight { padding: 80px 0; }
   justify-content: space-between;
   align-items: flex-start;
   position: relative;
-  z-index: 2;
+  z-index: 4;
 }
 
 .case-card h3,
 .case-card p {
   position: relative;
-  z-index: 2;
+  z-index: 4;
 }
 
 .case-card__tag {
