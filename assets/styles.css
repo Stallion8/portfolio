@@ -253,7 +253,6 @@
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .topbar,
-  .case-card,
   .btn,
   .bento-tile,
   .credential-tag,
@@ -1048,9 +1047,26 @@ section.tight { padding: 80px 0; }
 }
 
 .case-card {
+  /* Theme-agnostic — fixed Amoled “space window” portal */
+  --tile-glass-bg: rgba(8, 9, 14, 0.68);
+  --tile-glass-bg-hover: rgba(10, 11, 18, 0.78);
+  --tile-glass-border: rgba(255, 255, 255, 0.22);
+  --tile-text: #f2f0eb;
+  --tile-text-dim: #cdc9c2;
+  --tile-tag: #a8adb8;
+  --tile-glow-cyan: #35e4e0;
+  --tile-glow-red: #ff2d42;
+  --tile-blend: screen;
+  --tile-glass-filter: blur(48px) saturate(220%) brightness(0.96) contrast(1.08);
+  --tile-glass-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.55),
+    0 8px 24px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.28);
+
   grid-column: span 2;
   grid-row: span 2;
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--tile-glass-border);
   border-radius: 12px;
   padding: 28px;
   display: flex;
@@ -1059,9 +1075,29 @@ section.tight { padding: 80px 0; }
   position: relative;
   overflow: hidden;
   transform-style: preserve-3d;
-  background: var(--glass-bg);
+  background: var(--tile-glass-bg);
+  -webkit-backdrop-filter: var(--tile-glass-filter);
+  backdrop-filter: var(--tile-glass-filter);
+  box-shadow: var(--tile-glass-shadow);
+  color: var(--tile-text);
   transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, background 0.35s ease, box-shadow 0.35s ease;
   isolation: isolate;
+}
+
+.case-card--cyan { --card-glow: var(--tile-glow-cyan); }
+.case-card--red { --card-glow: var(--tile-glow-red); }
+
+[data-theme="beige"] .case-card,
+[data-theme="sunshine"] .case-card {
+  box-shadow:
+    var(--tile-glass-shadow),
+    0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .case-card {
+    background: #0a0b10;
+  }
 }
 
 @media (max-width: 560px) {
@@ -1071,8 +1107,8 @@ section.tight { padding: 80px 0; }
 }
 
 .case-card:hover {
-  border-color: color-mix(in srgb, var(--card-glow, var(--cyan)) 55%, var(--glass-border));
-  background: var(--glass-bg-hover);
+  border-color: color-mix(in srgb, var(--card-glow, var(--tile-glow-cyan)) 55%, var(--tile-glass-border));
+  background: var(--tile-glass-bg-hover);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1083,6 +1119,24 @@ section.tight { padding: 80px 0; }
   .case-card:hover {
     transform: translateY(-2px);
   }
+}
+
+.case-card::after {
+  display: block;
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(6, 7, 12, 0.18) 0%,
+    rgba(6, 7, 12, 0.42) 48%,
+    rgba(6, 7, 12, 0.82) 100%
+  );
+  box-shadow: none;
 }
 
 .case-card__halation {
@@ -1119,7 +1173,7 @@ section.tight { padding: 80px 0; }
   content: "";
   position: absolute;
   inset: -30%;
-  background: radial-gradient(circle at var(--halation-x, 78%) var(--halation-y, 40%), var(--card-glow, var(--cyan)), transparent 62%);
+  background: radial-gradient(circle at var(--halation-x, 78%) var(--halation-y, 40%), var(--card-glow, var(--tile-glow-cyan)), transparent 62%);
   opacity: 0;
   filter: blur(24px);
   transition: opacity 0.45s ease;
@@ -1146,12 +1200,12 @@ section.tight { padding: 80px 0; }
 .case-card__tag {
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--graphite);
+  color: var(--tile-tag);
 }
 
 .case-card__arrow {
   font-family: var(--font-mono);
-  color: var(--card-glow, var(--cyan));
+  color: var(--card-glow, var(--tile-glow-cyan));
   transition: transform 0.3s ease;
 }
 .case-card:hover .case-card__arrow { transform: translate(4px, -4px); }
@@ -1159,10 +1213,11 @@ section.tight { padding: 80px 0; }
 .case-card h3 {
   font-size: clamp(20px, 2.4vw, 26px);
   margin-top: 16px;
+  color: var(--tile-text);
 }
 
 .case-card p {
-  color: var(--bone-dim);
+  color: var(--tile-text-dim);
   font-size: 14px;
   margin-top: 10px;
 }

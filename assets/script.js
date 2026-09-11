@@ -391,23 +391,13 @@ if (topbar) {
 
   function parseGlowColor(el) {
     const probe = document.createElement('span');
-    probe.style.color = getComputedStyle(el).getPropertyValue('--card-glow').trim() || 'var(--cyan)';
+    probe.style.color = getComputedStyle(el).getPropertyValue('--card-glow').trim() || '#35e4e0';
     probe.style.display = 'none';
     document.body.appendChild(probe);
     const rgb = getComputedStyle(probe).color.match(/[\d.]+/g);
     document.body.removeChild(probe);
     if (!rgb) return { r: 53, g: 228, b: 224 };
     return { r: +rgb[0], g: +rgb[1], b: +rgb[2] };
-  }
-
-  function themeIntensity() {
-    const theme = document.documentElement.getAttribute('data-theme') || 'amoled';
-    return theme === 'amoled' ? 1 : 0.72;
-  }
-
-  function spaceDepth() {
-    const theme = document.documentElement.getAttribute('data-theme') || 'amoled';
-    return theme === 'amoled' ? 1 : 0.5;
   }
 
   function drawBloom(ctx, x, y, radius, color, alpha, blend) {
@@ -620,13 +610,13 @@ if (topbar) {
         card.classList.add('is-halation-visible');
         card.classList.toggle('is-halation-active', this.hoverBlend > 0.08);
 
-        const intensity = themeIntensity();
-        const depth = spaceDepth();
+        const intensity = 1;
+        const depth = 1;
         const glow = parseGlowColor(card);
         const secondary = glow.r > 180
           ? { r: 53, g: 228, b: 224 }
           : { r: 255, g: 45, b: 66 };
-        const halationBlend = getComputedStyle(document.documentElement).getPropertyValue('--halation-blend').trim() || 'screen';
+        const halationBlend = 'screen';
         const hx = this.x * width;
         const hy = this.y * height;
         const base = Math.max(width, height);
