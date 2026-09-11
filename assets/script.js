@@ -404,10 +404,10 @@ if (topbar) {
     ctx.globalCompositeOperation = blend;
     const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
     grad.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`);
-    grad.addColorStop(0.08, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.72})`);
-    grad.addColorStop(0.2, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.28})`);
-    grad.addColorStop(0.38, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.07})`);
-    grad.addColorStop(0.55, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.015})`);
+    grad.addColorStop(0.1, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.8})`);
+    grad.addColorStop(0.24, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.36})`);
+    grad.addColorStop(0.44, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.11})`);
+    grad.addColorStop(0.64, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.028})`);
     grad.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
     ctx.fillStyle = grad;
     ctx.beginPath();
@@ -431,15 +431,15 @@ if (topbar) {
   function drawStar(ctx, x, y, star, t, intensity, hoverBoost) {
     const twinkle = 0.86 + Math.sin(t * 1.35 + star.twinkle) * 0.14;
     const alpha = (star.bright
-      ? 0.55 + hoverBoost * 0.18
+      ? 0.62 + hoverBoost * 0.2
       : star.medium
-        ? 0.4 + hoverBoost * 0.14
-        : 0.3 + hoverBoost * 0.1) * twinkle * intensity;
+        ? 0.46 + hoverBoost * 0.16
+        : 0.35 + hoverBoost * 0.12) * twinkle * intensity;
 
     if (star.bright) {
       const halo = ctx.createRadialGradient(x, y, 0, x, y, star.r * 2.4);
-      halo.addColorStop(0, `rgba(255, 255, 255, ${Math.min(alpha * 0.55, 0.5)})`);
-      halo.addColorStop(0.45, `rgba(210, 228, 255, ${alpha * 0.12})`);
+      halo.addColorStop(0, `rgba(255, 255, 255, ${Math.min(alpha * 0.62, 0.58)})`);
+      halo.addColorStop(0.45, `rgba(210, 228, 255, ${alpha * 0.16})`);
       halo.addColorStop(1, 'rgba(255, 255, 255, 0)');
       ctx.fillStyle = halo;
       ctx.beginPath();
@@ -449,16 +449,16 @@ if (topbar) {
 
     ctx.beginPath();
     ctx.arc(x, y, star.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(alpha, 0.95)})`;
+    ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(alpha, 1)})`;
     ctx.fill();
   }
 
   function drawMicroStar(ctx, x, y, star, t, intensity, hoverBoost) {
     const twinkle = 0.92 + Math.sin(t * 2.1 + star.twinkle) * 0.08;
-    const alpha = (0.2 + hoverBoost * 0.08) * twinkle * intensity;
+    const alpha = (0.27 + hoverBoost * 0.1) * twinkle * intensity;
     ctx.beginPath();
     ctx.arc(x, y, star.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(215, 225, 245, ${alpha})`;
+    ctx.fillStyle = `rgba(228, 236, 252, ${alpha})`;
     ctx.fill();
   }
 
@@ -479,10 +479,10 @@ if (topbar) {
     const pulse = 1 + Math.sin(t * 0.48 + phase) * 0.06;
     const tint = mixRgb(glow, secondary, 0.38 + Math.sin(t * 0.22 + phase) * 0.12);
 
-    drawBloom(ctx, x, y, base * 0.72 * pulse, glow, 0.05 * s, blend);
-    drawBloom(ctx, x, y, base * 0.5 * pulse, tint, 0.058 * s, blend);
-    drawBloom(ctx, x, y, base * 0.34 * pulse, glow, 0.066 * s, blend);
-    drawBloom(ctx, x, y, base * 0.22 * pulse, tint, 0.04 * s, blend);
+    drawBloom(ctx, x, y, base * 0.8 * pulse, glow, 0.065 * s, blend);
+    drawBloom(ctx, x, y, base * 0.58 * pulse, tint, 0.075 * s, blend);
+    drawBloom(ctx, x, y, base * 0.4 * pulse, glow, 0.085 * s, blend);
+    drawBloom(ctx, x, y, base * 0.26 * pulse, tint, 0.052 * s, blend);
   }
 
   function ensureLoop() {
