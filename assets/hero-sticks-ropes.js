@@ -46,8 +46,12 @@
   let height = 0;
   let dpr = 1;
   let rafId = 0;
+  let resizeTimer = 0;
   let visible = true;
   let t = 0;
+  const isMobileLayout = () => window.matchMedia('(max-width: 900px)').matches;
+  const RESIZE_W_THRESHOLD = 10;
+  const RESIZE_H_THRESHOLD = 120;
   const legend = { right: 0, bottom: 0, left: 0, lineHeight: 16 };
   const pointer = { x: 0, y: 0, smoothX: 0, smoothY: 0, active: false };
 
@@ -117,10 +121,12 @@
   }
 
   function legendViewportBottom() {
+    const pad = 18;
+    if (isMobileLayout()) return height - pad;
+
     const zoneRect = hitzone.getBoundingClientRect();
     const viewBottom = window.innerHeight - 32;
     const canvasY = viewBottom - zoneRect.top;
-    const pad = 18;
     return Math.max(pad + 32, Math.min(height - pad, canvasY));
   }
 
@@ -225,15 +231,66 @@
     setLegendPosition();
   }
 
-  function resize() {
-    const rect = hitzone.getBoundingClientRect();
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    width = Math.max(1, Math.floor(rect.width));
-    height = Math.max(1, Math.floor(rect.height));
+  function applyCanvasSize(w, h) {
+    width = w;
+    height = h;
     canvas.width = Math.floor(width * dpr);
     canvas.height = Math.floor(height * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function rescaleLayout(newW, newH) {
+    if (!width || !height || !nodes.length) {
+      applyCanvasSize(newW, newH);
+      buildGraph();
+      return;
+    }
+
+    const sx = newW / width;
+    const sy = newH / height;
+    applyCanvasSize(newW, newH);
+
+    nodes.forEach((node) => {
+      node.x *= sx;
+      node.y *= sy;
+      node.homeX *= sx;
+      node.homeY *= sy;
+    });
+
+    springs.forEach((spring) => {
+      const a = nodes[spring.i];
+      const b = nodes[spring.j];
+      spring.rest = Math.hypot(b.homeX - a.homeX, b.homeY - a.homeY) * 0.92;
+    });
+
+    setLegendPosition();
+  }
+
+  function resize() {
+    const rect = hitzone.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const newW = Math.max(1, Math.floor(rect.width));
+    const newH = Math.max(1, Math.floor(rect.height));
+
+    if (width > 0 && height > 0) {
+      const dw = Math.abs(newW - width);
+      const dh = Math.abs(newH - height);
+
+      if (dw < RESIZE_W_THRESHOLD && dh < RESIZE_H_THRESHOLD) return;
+
+      if (dw < RESIZE_W_THRESHOLD && dh >= RESIZE_H_THRESHOLD) {
+        rescaleLayout(newW, newH);
+        return;
+      }
+    }
+
+    applyCanvasSize(newW, newH);
     buildGraph();
+  }
+
+  function scheduleResize() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(resize, 100);
   }
 
   function ropeCohesion(node) {
@@ -476,13 +533,15 @@
     rafId = requestAnimationFrame(loop);
   }
 
-  window.addEventListener('resize', resize);
-  window.addEventListener('scroll', setLegendPosition, { passive: true });
+  window.addEventListener('resize', scheduleResize);
+  if (!isMobileLayout()) {
+    window.addEventListener('scroll', setLegendPosition, { passive: true });
+  }
   document.addEventListener('pointermove', (e) => setPointerFromClient(e.clientX, e.clientY), { passive: true });
   document.addEventListener('pointerdown', (e) => setPointerFromClient(e.clientX, e.clientY), { passive: true });
 
   if ('ResizeObserver' in window) {
-    const ro = new ResizeObserver(() => resize());
+    const ro = new ResizeObserver(() => scheduleResize());
     ro.observe(hitzone);
   }
 

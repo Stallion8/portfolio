@@ -777,9 +777,20 @@ html.theme-switching *::after {
 }
 
 @media (max-width: 900px) {
+  .hero__visual-layer {
+    min-height: 100svh;
+  }
+
+  .hero__accent-glow {
+    left: 0;
+    width: min(52vw, 260px);
+  }
+
   .hero__sticks-hitzone {
     width: 100%;
+    min-height: 100svh;
   }
+
   .hero__sticks-ropes {
     opacity: 0.55;
   }
@@ -1078,24 +1089,28 @@ section.tight { padding: 80px 0; }
 }
 
 .case-ship__beacon--left {
-  left: 23%;
-  top: 7%;
+  left: 21.3%;
+  top: 13.4%;
   --blink-dur: 14s;
   --blink-delay: 0.4s;
 }
 
 .case-ship__beacon--center {
-  left: 50%;
-  top: 2%;
+  left: 46.9%;
+  top: 0.9%;
   width: 2.5px;
   height: 2.5px;
+  background: #1d4ed8;
+  box-shadow:
+    0 0 2px rgba(29, 78, 216, 0.95),
+    0 0 5px rgba(37, 99, 235, 0.55);
   --blink-dur: 17s;
   --blink-delay: 5.5s;
 }
 
 .case-ship__beacon--right {
-  left: 77%;
-  top: 7%;
+  left: 74.4%;
+  top: 9.5%;
   --blink-dur: 15.5s;
   --blink-delay: 9s;
 }
