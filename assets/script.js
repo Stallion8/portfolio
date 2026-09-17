@@ -89,34 +89,144 @@ if (scrollCue) {
 }
 
 // ==========================================================================
-// Text scramble / decode-in — signature terminal-boot effect for the
-// homepage hero name
+// Gentle hero name reveal — soft staggered blur-fade for homepage h1
 // ==========================================================================
-function scrambleInto(el, duration = 700) {
-  const finalText = el.textContent;
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&01';
-  let start = null;
-  function frame(ts) {
-    if (!start) start = ts;
-    const progress = Math.min((ts - start) / duration, 1);
-    const revealCount = Math.floor(progress * finalText.length);
-    let out = '';
-    for (let i = 0; i < finalText.length; i++) {
-      out += (i < revealCount || finalText[i] === ' ')
-        ? finalText[i]
-        : chars[Math.floor(Math.random() * chars.length)];
+(function initGentleNameReveal() {
+  const lines = document.querySelectorAll('[data-gentle-reveal]');
+  if (!lines.length) return;
+
+  lines.forEach((line, lineIndex) => {
+    const finalText = line.textContent.trim();
+    if (!finalText) return;
+
+    line.textContent = '';
+    line.setAttribute('aria-label', finalText);
+
+    if (prefersReducedMotion) {
+      line.textContent = finalText;
+      line.classList.add('gentle-reveal--done');
+      return;
     }
-    el.textContent = out;
-    if (progress < 1) requestAnimationFrame(frame);
-    else el.textContent = finalText;
-  }
-  requestAnimationFrame(frame);
-}
-if (!prefersReducedMotion) {
-  document.querySelectorAll('[data-scramble]').forEach((el, i) => {
-    setTimeout(() => scrambleInto(el), 250 + i * 120);
+
+    const baseDelay = 320 + lineIndex * 380;
+    const chars = [...finalText];
+    const delay = (i) => `${baseDelay + i * 52}ms`;
+
+    function freezeChar(char) {
+      char.classList.add('gentle-char--settled');
+      char.style.animation = 'none';
+      char.style.opacity = '1';
+      char.style.transform = 'translateY(0)';
+
+      const inner = char.querySelector('.gentle-char__inner');
+      if (inner) {
+        inner.style.animation = 'none';
+        inner.style.filter = 'none';
+      }
+    }
+
+    chars.forEach((ch, i) => {
+      const char = document.createElement('span');
+      char.className = 'gentle-char';
+      char.style.animationDelay = delay(i);
+
+      const inner = document.createElement('span');
+      inner.className = 'gentle-char__inner';
+      inner.style.animationDelay = delay(i);
+      inner.textContent = ch === ' ' ? '\u00a0' : ch;
+      char.appendChild(inner);
+
+      char.addEventListener('animationend', (event) => {
+        if (event.target !== char || event.animationName !== 'gentle-char-rise') return;
+        freezeChar(char);
+        if (line.classList.contains('accent') && i === chars.length - 1) {
+          window.setTimeout(() => line.classList.add('gentle-reveal--done'), 300);
+        }
+      });
+
+      line.appendChild(char);
+    });
   });
-}
+})();
+
+// ==========================================================================
+// Matrix slot-boot — hero eyebrows decode once per page load
+// ==========================================================================
+(function initMatrixBoot() {
+  const pool = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&アイウエオカキクケコサシスセソ';
+  const roots = document.querySelectorAll('[data-matrix-boot]');
+  if (!roots.length) return;
+
+  if (prefersReducedMotion) {
+    roots.forEach((root) => {
+      root.classList.add('matrix-boot--active');
+    });
+    return;
+  }
+
+  function lockChar(span, ch) {
+    span.textContent = ch;
+    span.classList.add('is-locked');
+  }
+
+  function spinChar(span, final, startDelay) {
+    if (final === ' ') {
+      span.innerHTML = '\u00a0';
+      span.classList.add('is-locked', 'matrix-char--space');
+      return;
+    }
+
+    const spins = 7 + Math.floor(Math.random() * 11);
+    const tickMs = 38 + Math.random() * 28;
+    let count = 0;
+
+    window.setTimeout(() => {
+      span.classList.add('is-spinning');
+      const tick = window.setInterval(() => {
+        count += 1;
+        if (count >= spins) {
+          window.clearInterval(tick);
+          lockChar(span, final);
+          span.classList.remove('is-spinning');
+          return;
+        }
+        span.textContent = pool[Math.floor(Math.random() * pool.length)];
+      }, tickMs);
+    }, startDelay);
+  }
+
+  roots.forEach((root) => {
+    const text = root.textContent.trim();
+    if (!text) return;
+
+    root.textContent = '';
+    root.setAttribute('aria-label', text);
+    root.classList.add('matrix-boot--active');
+
+    const chars = [...text];
+    const spans = chars.map((ch) => {
+      const span = document.createElement('span');
+      span.className = 'matrix-char';
+      span.textContent = pool[Math.floor(Math.random() * pool.length)];
+      root.appendChild(span);
+      return { span, ch };
+    });
+
+    const order = spans
+      .map((item, index) => ({ index, ch: item.ch }))
+      .filter((item) => item.ch !== ' ')
+      .sort(() => Math.random() - 0.5);
+
+    spans.forEach(({ span, ch }) => {
+      if (ch === ' ') lockChar(span, ch);
+    });
+
+    order.forEach((item, seq) => {
+      const delay = 40 + seq * (42 + Math.random() * 38) + Math.random() * 90;
+      spinChar(spans[item.index].span, spans[item.index].ch, delay);
+    });
+  });
+})();
 
 // ==========================================================================
 // Magnetic buttons — subtle cursor-attraction on primary CTAs
@@ -229,7 +339,7 @@ if (topbar) {
     {
       id: 'beige',
       label: 'Beige theme',
-      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><circle cx="12" cy="12" r="7"/><path d="M8 14c1.2 1.6 2.6 2.5 4 2.5s2.8-.9 4-2.5"/></svg>'
+      icon: '<svg class="theme-icon-book" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><defs><clipPath id="book-icon-clip"><rect x="0.8" y="2" width="14.4" height="11.6" rx="0.35"/></clipPath></defs><g clip-path="url(#book-icon-clip)"><path class="book-page-left" d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828z"/><g class="book-page-next"><path d="M8.5 2.687c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687z"/><path class="book-page-next__lines" fill="none" stroke="currentColor" stroke-width=".35" stroke-linecap="round" d="M9.4 5h4.4M9.1 6.8h3.9M9.4 8.6h3.5"/></g><g class="book-flip"><path d="M8.5 2.687c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687z"/></g></g></svg>'
     },
     {
       id: 'sunshine',
