@@ -720,8 +720,8 @@ if (topbar) {
         card.classList.add('is-halation-visible');
         card.classList.toggle('is-halation-active', this.hoverBlend > 0.08);
 
-        const intensity = 1;
-        const depth = 1;
+        const intensity = 0.94 + this.hoverBlend * 0.22;
+        const depth = 0.9 + this.hoverBlend * 0.18;
         const glow = parseGlowColor(card);
         const secondary = glow.r > 180
           ? { r: 53, g: 228, b: 224 }
